@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useEditorStore } from '@/store/editor.store';
 import { Copy, Check } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const DEFAULT_COLORS = [
   '#3b82f6',
@@ -22,9 +23,37 @@ export const ColorPalette = () => {
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
 
   const handleCopyColor = (color: string) => {
-    navigator.clipboard.writeText(color);
-    setCopiedColor(color);
-    setTimeout(() => setCopiedColor(null), 2000);
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(color).then(() => {
+          setCopiedColor(color);
+          toast.success(`Copied ${color}`);
+          setTimeout(() => setCopiedColor(null), 2000);
+        }).catch(() => {
+          fallbackCopy(color);
+        });
+      } else {
+        fallbackCopy(color);
+      }
+    } catch (error) {
+      fallbackCopy(color);
+    }
+  };
+
+  const fallbackCopy = (color: string) => {
+    const textArea = document.createElement('textarea');
+    textArea.value = color;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setCopiedColor(color);
+      toast.success(`Copied ${color}`);
+      setTimeout(() => setCopiedColor(null), 2000);
+    } catch (err) {
+      toast.error('Failed to copy color');
+    }
+    document.body.removeChild(textArea);
   };
 
   return (
