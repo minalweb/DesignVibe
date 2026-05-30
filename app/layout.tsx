@@ -12,9 +12,54 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://designvibe.vercel.app";
+
 export const metadata: Metadata = {
   title: "DesignVibe - AI-Powered Design Canvas",
-  description: "Transform images into editable design layers using AI-powered analysis",
+  description: "Transform images into editable design layers using AI-powered analysis. Automatically detect text, shapes, and colors.",
+  keywords: ["design", "ai", "canvas", "image analysis", "design tool"],
+  authors: [{ name: "DesignVibe" }],
+  creator: "DesignVibe",
+  publisher: "DesignVibe",
+  
+  // Open Graph
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    title: "DesignVibe - AI-Powered Design Canvas",
+    description: "Transform images into editable design layers using AI-powered analysis.",
+    siteName: "DesignVibe",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "DesignVibe - AI-Powered Design Canvas",
+        type: "image/png",
+      },
+    ],
+  },
+
+  // Twitter Card
+  twitter: {
+    card: "summary_large_image",
+    title: "DesignVibe - AI-Powered Design Canvas",
+    description: "Transform images into editable design layers using AI-powered analysis.",
+    images: [`${SITE_URL}/og-image.png`],
+    creator: "@designvibe",
+  },
+
+  // Verification and other tags
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
+
+  // Canonical URL
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: SITE_URL,
+  },
 };
 
 export const viewport: Viewport = {

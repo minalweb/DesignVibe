@@ -22,59 +22,75 @@ const getColorsFromImage = async (imageUrl: string, numColors: number): Promise<
     const img = new Image();
     img.crossOrigin = 'anonymous';
 
+    const cleanup = () => {
+      img.src = '';
+      img.onload = null;
+      img.onerror = null;
+    };
+
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-      if (!ctx) {
+        if (!ctx) {
+          cleanup();
+          resolve(getDefaultColors());
+          return;
+        }
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Sample colors from image
+        const colors: Array<{ r: number; g: number; b: number }> = [];
+        const step = Math.max(1, Math.floor(data.length / (numColors * 4)));
+
+        for (let i = 0; i < data.length; i += step * 4) {
+          colors.push({
+            r: data[i],
+            g: data[i + 1],
+            b: data[i + 2],
+          });
+        }
+
+        // Group similar colors and get frequency
+        const colorMap = new Map<string, number>();
+        colors.forEach((color) => {
+          const hex = rgbToHex(color.r, color.g, color.b);
+          colorMap.set(hex, (colorMap.get(hex) || 0) + 1);
+        });
+
+        // Sort by frequency and convert to ColorResult
+        const results: ColorResult[] = Array.from(colorMap.entries())
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, numColors)
+          .map(([hex, usage], index) => {
+            const rgb = parseHex(hex);
+            return {
+              hex,
+              rgb,
+              hsv: rgbToHsv(rgb.r, rgb.g, rgb.b),
+              usage: usage,
+            };
+          });
+
+        cleanup();
+        resolve(results.length > 0 ? results : getDefaultColors());
+      } catch (error) {
+        console.error('[v0] Error extracting colors:', error);
+        cleanup();
         resolve(getDefaultColors());
-        return;
       }
-
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-
-      // Sample colors from image
-      const colors: Array<{ r: number; g: number; b: number }> = [];
-      const step = Math.max(1, Math.floor(data.length / (numColors * 4)));
-
-      for (let i = 0; i < data.length; i += step * 4) {
-        colors.push({
-          r: data[i],
-          g: data[i + 1],
-          b: data[i + 2],
-        });
-      }
-
-      // Group similar colors and get frequency
-      const colorMap = new Map<string, number>();
-      colors.forEach((color) => {
-        const hex = rgbToHex(color.r, color.g, color.b);
-        colorMap.set(hex, (colorMap.get(hex) || 0) + 1);
-      });
-
-      // Sort by frequency and convert to ColorResult
-      const results: ColorResult[] = Array.from(colorMap.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, numColors)
-        .map(([hex, usage], index) => {
-          const rgb = parseHex(hex);
-          return {
-            hex,
-            rgb,
-            hsv: rgbToHsv(rgb.r, rgb.g, rgb.b),
-            usage: usage,
-          };
-        });
-
-      resolve(results.length > 0 ? results : getDefaultColors());
     };
 
     img.onerror = () => {
+      console.error('[v0] Failed to load image for color extraction:', imageUrl);
+      cleanup();
       resolve(getDefaultColors());
     };
 

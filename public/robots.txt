@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Disallow private paths
+Disallow: /api/
+Disallow: /admin/
+
+# Allow public paths
+Allow: /
+
+# Sitemap
+Sitemap: https://designvibe.vercel.app/sitemap.xml
+
+# Crawl delay for search engines
+Crawl-delay: 1

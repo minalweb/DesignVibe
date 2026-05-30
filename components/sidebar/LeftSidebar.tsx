@@ -22,7 +22,16 @@ export const LeftSidebar = ({ onImageUpload, isAnalyzing = false }: LeftSidebarP
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file) {
+      const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+      if (!file.type.startsWith('image/')) {
+        console.error('[v0] File must be an image');
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        console.error('[v0] File size exceeds 50MB limit');
+        return;
+      }
       onImageUpload?.(file);
     }
   };
@@ -40,7 +49,16 @@ export const LeftSidebar = ({ onImageUpload, isAnalyzing = false }: LeftSidebarP
     e.preventDefault();
     e.currentTarget.classList.remove('bg-neutral-600');
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file) {
+      const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+      if (!file.type.startsWith('image/')) {
+        console.error('[v0] File must be an image');
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        console.error('[v0] File size exceeds 50MB limit');
+        return;
+      }
       onImageUpload?.(file);
     }
   };
