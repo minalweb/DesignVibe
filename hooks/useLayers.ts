@@ -19,6 +19,7 @@ export const useLayers = () => {
     toggleLayerVisibility,
     toggleLayerLock,
     getLayer,
+    setSelectedLayerIds,
   } = useLayerStore();
 
   const historyPush = useHistoryStore((state) => state.push);
@@ -77,6 +78,11 @@ export const useLayers = () => {
     historyPush([...layers]);
   }, [activeLayerId, duplicateLayer, layers, historyPush]);
 
+  const selectAllLayers = useCallback(() => {
+    const allLayerIds = layers.map((layer) => layer.id);
+    setSelectedLayerIds(allLayerIds);
+  }, [layers]);
+
   return {
     layers,
     activeLayerId,
@@ -85,6 +91,7 @@ export const useLayers = () => {
     removeLayer,
     changeLayer,
     duplicateSelected,
+    selectAllLayers,
     toggleLayerVisibility,
     toggleLayerLock,
     getLayer,

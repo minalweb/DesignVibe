@@ -80,7 +80,7 @@ export const analyzeImage = async (
       layers: imageLayers,
     };
   } catch (error) {
-    console.error('Analysis pipeline error:', error);
+    console.error('[v0] Analysis pipeline error:', error);
     throw error;
   } finally {
     await disposeTesseract();
@@ -97,14 +97,26 @@ const getImageDimensions = async (
     const img = new Image();
     img.crossOrigin = 'anonymous';
 
+    const cleanup = () => {
+      img.src = '';
+      img.onload = null;
+      img.onerror = null;
+    };
+
     img.onload = () => {
-      resolve({
-        width: img.naturalWidth || img.width,
-        height: img.naturalHeight || img.height,
-      });
+      try {
+        resolve({
+          width: img.naturalWidth || img.width,
+          height: img.naturalHeight || img.height,
+        });
+      } finally {
+        cleanup();
+      }
     };
 
     img.onerror = () => {
+      console.warn('[v0] Failed to load image dimensions, using defaults');
+      cleanup();
       resolve({ width: 1200, height: 800 });
     };
 

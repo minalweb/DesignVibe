@@ -26,33 +26,46 @@ export const ExportModal = ({ isOpen, onClose, canvas }: ExportModalProps) => {
 
   const handleExport = async () => {
     try {
+      if (!filename.trim()) {
+        toast.error('Please enter a filename');
+        return;
+      }
+
+      // Sanitize filename
+      const sanitizedFilename = filename.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 255);
+
       setIsExporting(true);
 
       for (const format of selectedFormats) {
-        switch (format) {
-          case 'png':
-            if (canvas) {
-              await exportToPNG(canvas, `${filename}.png`);
-              toast.success('PNG exported!');
-            }
-            break;
-          case 'svg':
-            if (canvas) {
-              await exportToSVG(canvas, `${filename}.svg`);
-              toast.success('SVG exported!');
-            }
-            break;
-          case 'json':
-            await exportToJSON(layers, `${filename}.json`);
-            toast.success('JSON exported!');
-            break;
+        try {
+          switch (format) {
+            case 'png':
+              if (canvas) {
+                await exportToPNG(canvas, `${sanitizedFilename}.png`);
+                toast.success('PNG exported!');
+              }
+              break;
+            case 'svg':
+              if (canvas) {
+                await exportToSVG(canvas, `${sanitizedFilename}.svg`);
+                toast.success('SVG exported!');
+              }
+              break;
+            case 'json':
+              await exportToJSON(layers, `${sanitizedFilename}.json`);
+              toast.success('JSON exported!');
+              break;
+          }
+        } catch (formatError) {
+          console.error(`[v0] Failed to export ${format}:`, formatError);
+          toast.error(`Failed to export ${format.toUpperCase()}`);
         }
       }
 
       onClose();
     } catch (error) {
-      console.error('Export error:', error);
-      toast.error('Export failed');
+      console.error('[v0] Export error:', error);
+      toast.error('Export failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setIsExporting(false);
     }

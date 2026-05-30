@@ -11,6 +11,7 @@ interface LayerStore extends LayerState {
   toggleLayerVisibility: (id: string) => void;
   toggleLayerLock: (id: string) => void;
   getLayer: (id: string) => Layer | undefined;
+  setSelectedLayerIds: (ids: string[]) => void;
   reset: () => void;
 }
 
@@ -87,6 +88,8 @@ export const useLayerStore = create<LayerStore>((set, get) => ({
     const state = get();
     return state.layers.find((layer) => layer.id === id);
   },
+
+  setSelectedLayerIds: (ids) => set({ selectedLayerIds: ids }),
   
   reset: () => set(initialState),
 }));
