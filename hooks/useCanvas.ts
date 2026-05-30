@@ -1,26 +1,36 @@
 'use client';
 
 import { useRef, useCallback, useEffect } from 'react';
-import { Canvas as FabricCanvas } from 'fabric';
 
 export const useCanvas = (canvasElement: HTMLCanvasElement | null) => {
-  const canvasRef = useRef<FabricCanvas | null>(null);
+  const canvasRef = useRef<any>(null);
 
   // Initialize canvas
   useEffect(() => {
     if (!canvasElement || canvasRef.current) return;
 
-    const fabric = FabricCanvas;
-    canvasRef.current = new fabric({
-      container: canvasElement,
-      width: 1200,
-      height: 800,
-      backgroundColor: '#ffffff',
-    });
+    const initCanvas = async () => {
+      try {
+        const fabricModule = await import('fabric');
+        const fabric = fabricModule.default || fabricModule;
+
+        canvasRef.current = new fabric.Canvas(canvasElement, {
+          width: 1200,
+          height: 800,
+          backgroundColor: '#ffffff',
+        });
+      } catch (error) {
+        console.error('[v0] Failed to initialize canvas:', error);
+      }
+    };
+
+    initCanvas();
 
     return () => {
-      canvasRef.current?.dispose();
-      canvasRef.current = null;
+      if (canvasRef.current) {
+        canvasRef.current.dispose();
+        canvasRef.current = null;
+      }
     };
   }, [canvasElement]);
 

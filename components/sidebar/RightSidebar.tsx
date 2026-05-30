@@ -138,15 +138,15 @@ export const RightSidebar = () => {
             <div className="flex gap-2">
               <input
                 type="color"
-                value={layer.data.fill}
+                value={(layer.data as any).fill}
                 onChange={(e) => {
                   changeLayer(layer.id, {
-                    data: { ...layer.data, fill: e.target.value },
+                    data: { ...(layer.data as any), fill: e.target.value },
                   });
                 }}
                 className="flex-1 h-10 rounded cursor-pointer bg-neutral-700 border border-neutral-600"
               />
-              <span className="text-xs text-neutral-400 flex items-center">{layer.data.fill}</span>
+              <span className="text-xs text-neutral-400 flex items-center">{(layer.data as any).fill}</span>
             </div>
           </div>
         )}
@@ -158,10 +158,10 @@ export const RightSidebar = () => {
               <label className="block text-xs font-semibold text-neutral-300 mb-2">Font Size</label>
               <input
                 type="number"
-                value={layer.data.fontSize}
+                value={(layer.data as any).fontSize}
                 onChange={(e) => {
                   changeLayer(layer.id, {
-                    data: { ...layer.data, fontSize: parseFloat(e.target.value) || 16 },
+                    data: { ...(layer.data as any), fontSize: parseFloat(e.target.value) || 16 },
                   });
                 }}
                 className="w-full px-2 py-1 bg-neutral-700 rounded text-sm text-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -171,10 +171,10 @@ export const RightSidebar = () => {
               <label className="block text-xs font-semibold text-neutral-300 mb-2">Text Color</label>
               <input
                 type="color"
-                value={layer.data.fill}
+                value={(layer.data as any).fill}
                 onChange={(e) => {
                   changeLayer(layer.id, {
-                    data: { ...layer.data, fill: e.target.value },
+                    data: { ...(layer.data as any), fill: e.target.value },
                   });
                 }}
                 className="w-full h-10 rounded cursor-pointer bg-neutral-700 border border-neutral-600"

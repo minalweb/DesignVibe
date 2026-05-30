@@ -22,7 +22,9 @@ export const CanvasEditor = ({ onImageAnalyzed }: CanvasEditorProps) => {
 
     const initCanvas = async () => {
       try {
-        const { fabric } = await import('fabric');
+        if (!canvasRef.current) return;
+        const fabricModule = await import('fabric');
+        const fabric = fabricModule.default || fabricModule;
         const canvas = new fabric.Canvas(canvasRef.current, {
           width: 1200,
           height: 800,
@@ -55,7 +57,8 @@ export const CanvasEditor = ({ onImageAnalyzed }: CanvasEditorProps) => {
 
     const renderLayers = async () => {
       try {
-        const { fabric } = await import('fabric');
+        const fabricModule = await import('fabric');
+        const fabric = fabricModule.default || fabricModule;
         
         fabricCanvas.clear();
 

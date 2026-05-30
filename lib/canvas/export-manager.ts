@@ -1,4 +1,3 @@
-import { Canvas } from 'fabric';
 import { Layer } from '@/types/layer';
 
 export type ExportFormat = 'png' | 'svg' | 'json';
@@ -7,7 +6,7 @@ export type ExportFormat = 'png' | 'svg' | 'json';
  * Export canvas to PNG
  */
 export const exportToPNG = async (
-  canvas: Canvas,
+  canvas: any,
   filename = 'design.png',
   quality = 1
 ): Promise<void> => {
@@ -28,7 +27,7 @@ export const exportToPNG = async (
  * Export canvas to SVG
  */
 export const exportToSVG = async (
-  canvas: Canvas,
+  canvas: any,
   filename = 'design.svg'
 ): Promise<void> => {
   try {
@@ -75,7 +74,7 @@ export const exportToJSON = async (
  * Export canvas as multiple formats
  */
 export const exportAsMultiple = async (
-  canvas: Canvas,
+  canvas: any,
   layers: Layer[],
   formats: ExportFormat[],
   basename = 'design'
@@ -123,7 +122,7 @@ const downloadFile = (dataUrl: string, filename: string, isBlob = false) => {
 /**
  * Export canvas dimensions
  */
-export const getCanvasDimensions = (canvas: Canvas) => {
+export const getCanvasDimensions = (canvas: any) => {
   return {
     width: canvas.width || 1200,
     height: canvas.height || 800,
@@ -134,7 +133,7 @@ export const getCanvasDimensions = (canvas: Canvas) => {
  * Create a preview image from canvas
  */
 export const createPreview = async (
-  canvas: Canvas,
+  canvas: any,
   size: 'small' | 'medium' | 'large' = 'medium'
 ): Promise<string> => {
   try {

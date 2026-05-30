@@ -1,10 +1,12 @@
-import { Canvas, Text, Rect, Circle, Image, Group } from 'fabric';
 import { Layer } from '@/types/layer';
 
 /**
  * Convert a Layer object to a Fabric object
  */
-export const layerToFabricObject = (layer: Layer, canvas: Canvas) => {
+export const layerToFabricObject = async (layer: Layer, canvas: any) => {
+  const fabricModule = await import('fabric');
+  const fabric = fabricModule.default || fabricModule;
+  const { Text, Rect, Circle, Image, Group } = fabric;
   const { position, dimensions, rotation, opacity, data } = layer;
 
   let fabricObject;
@@ -181,14 +183,14 @@ export const cloneFabricObject = async (obj: any) => {
 /**
  * Serialize canvas to JSON
  */
-export const serializeCanvas = (canvas: Canvas) => {
+export const serializeCanvas = (canvas: any) => {
   return canvas.toJSON();
 };
 
 /**
  * Deserialize JSON to canvas
  */
-export const deserializeCanvas = (canvas: Canvas, json: any) => {
+export const deserializeCanvas = (canvas: any, json: any) => {
   return new Promise((resolve) => {
     canvas.loadFromJSON(json, () => {
       canvas.renderAll();
