@@ -61,7 +61,7 @@
       "permanent": true
     }
   ],
-  "env": [
-    "NEXT_PUBLIC_SITE_URL"
-  ]
+  "env": {
+    "NEXT_PUBLIC_SITE_URL": "@next_public_site_url"
+  }
 }
